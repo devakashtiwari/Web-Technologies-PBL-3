@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Architecture Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-light: #fafaf8;
+            --bg-light-secondary: #f3f1ed;
+            --text-light: #1a1a1a;
+            --text-light-secondary: #666666;
+            --border-light: #e8e6e1;
+            --accent-light: #d4784f;
+            --accent-light-hover: #c1653f;
+            --nav-light: #ffffff;
+            
+            --bg-dark: #0f0f0f;
+            --bg-dark-secondary: #1a1a1a;
+            --text-dark: #f5f5f5;
+            --text-dark-secondary: #b0b0b0;
+            --border-dark: #2a2a2a;
+            --accent-dark: #f4a582;
+            --accent-dark-hover: #f5b399;
+            --nav-dark: #141414;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            line-height: 1.7;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--nav-light);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1.2rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.dark-mode nav {
+            background-color: var(--nav-dark);
+            border-bottom-color: var(--border-dark);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            flex-grow: 1;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+        body.dark-mode nav a {
+            color: var(--text-dark);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-light);
+            transition: width 0.3s ease;
+        }
+
+        body.dark-mode nav a::after {
+            background-color: var(--accent-dark);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-light-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 50px;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .theme-toggle {
+            background: var(--bg-dark-secondary);
+            border-color: var(--border-dark);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .theme-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .hero {
+            margin-bottom: 5rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            line-height: 1.2;
+        }
+
+        body.dark-mode h1 {
+            color: var(--text-dark);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light-secondary);
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        body.dark-mode .subtitle {
+            color: var(--text-dark-secondary);
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 100px;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        section:nth-child(2) { animation-delay: 0.1s; }
+        section:nth-child(3) { animation-delay: 0.2s; }
+        section:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            position: relative;
+            padding-bottom: 0.8rem;
+        }
+
+        body.dark-mode h2 {
+            color: var(--text-dark);
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--accent-light);
+            border-radius: 2px;
+        }
+
+        body.dark-mode h2::after {
+            background-color: var(--accent-dark);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-light-secondary);
+            font-weight: 300;
+        }
+
+        body.dark-mode p {
+            color: var(--text-dark-secondary);
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--bg-light-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .card {
+            background-color: var(--bg-dark-secondary);
+            border-color: var(--border-dark);
+        }
+
+        .card:hover {
+            border-color: var(--accent-light);
+            transform: translateY(-4px);
+        }
+
+        body.dark-mode .card:hover {
+            border-color: var(--accent-dark);
+        }
+
+        .code {
+            background-color: var(--bg-light);
+            color: var(--accent-light);
+            padding: 0.4rem 0.8rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        body.dark-mode .code {
+            background-color: var(--bg-dark);
+            color: var(--accent-dark);
+        }
+
+        /* Example Links */
+        .examples {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .example-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem 1.2rem;
+            background-color: var(--bg-light-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            color: var(--accent-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: fit-content;
+        }
+
+        body.dark-mode .example-link {
+            background-color: var(--bg-dark-secondary);
+            border-color: var(--border-dark);
+            color: var(--accent-dark);
+        }
+
+        .example-link:hover {
+            background-color: var(--accent-light);
+            color: white;
+            transform: translateX(6px);
+        }
+
+        body.dark-mode .example-link:hover {
+            background-color: var(--accent-dark);
+        }
+
+        .arrow {
+            font-size: 1.2rem;
+        }
+
+        /* List Styles */
+        ul {
+            margin-left: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.8rem;
+            color: var(--text-light-secondary);
+        }
+
+        body.dark-mode li {
+            color: var(--text-dark-secondary);
+        }
+
+        li strong {
+            color: var(--text-light);
+        }
+
+        body.dark-mode li strong {
+            color: var(--text-dark);
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-light), #e8a47a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        body.dark-mode .gradient-text {
+            background: linear-gradient(135deg, var(--accent-dark), #ffb399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 5rem;
+            padding-top: 3rem;
+            border-top: 1px solid var(--border-light);
+            text-align: center;
+            color: var(--text-light-secondary);
+            font-size: 0.9rem;
+        }
+
+        body.dark-mode footer {
+            border-top-color: var(--border-dark);
+            color: var(--text-dark-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            main {
+                padding: 2rem 1rem;
+            }
+
+            nav {
+                padding: 1rem;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#query">Query Parameters</a>
+            <a href="#anchors">Anchor Links</a>
+            <a href="#examples">Examples</a>
+        </div>
+        <button class="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()">
+            <span class="theme-icon">☀️</span>
+        </button>
+    </nav>
+
+    <main>
+        <section id="home" class="hero">
+            <h1><span class="gradient-text">URL Architecture</span></h1>
+            <p class="subtitle">Mastering web URLs with query parameters and anchor links</p>
+            <p>Learn how to build well-structured URLs that improve navigation, user experience, and SEO.</p>
+        </section>
+
+        <section id="query">
+            <h2>Query Parameters</h2>
+            <p>Query parameters allow you to pass data through URLs using the <span class="code">?</span> separator. Chain multiple parameters with <span class="code">&</span>.</p>
+            
+            <div class="card">
+                <p><strong>Format:</strong> <span class="code">page.html?key=value&key2=value2</span></p>
+                <p style="margin-top: 1rem;"><strong>Real-world use cases:</strong></p>
+                <ul>
+                    <li><strong>Search:</strong> <span class="code">?q=javascript&page=1</span></li>
+                    <li><strong>Filtering:</strong> <span class="code">?category=tech&sort=date</span></li>
+                    <li><strong>Tracking:</strong> <span class="code">?utm_source=email&utm_campaign=spring</span></li>
+                    <li><strong>Authentication:</strong> <span class="code">?token=abc123&redirect=/dashboard</span></li>
+                </ul>
+            </div>
+
+            <p style="margin-top: 1.5rem;">Try these examples:</p>
+            <div class="examples">
+                <a href="?search=javascript" class="example-link">
+                    <span>Search for JavaScript</span>
+                    <span class="arrow">→</span>
+                </a>
+                <a href="?sort=date&order=desc" class="example-link">
+                    <span>Sort by Date (Descending)</span>
+                    <span class="arrow">→</span>
+                </a>
+                <a href="?category=web&page=1&limit=10" class="example-link">
+                    <span>Filter & Paginate</span>
+                    <span class="arrow">→</span>
+                </a>
+            </div>
+        </section>
+
+        <section id="anchors">
+            <h2>Anchor Links</h2>
+            <p>Anchor links (fragments) allow smooth navigation to specific sections using <span class="code">#section-id</span>. They can be combined with query parameters.</p>
+            
+            <div class="card">
+                <p><strong>Format:</strong> <span class="code">page.html#section-id</span></p>
+                <p style="margin-top: 1rem;"><strong>Combined:</strong> <span class="code">page.html?search=term#results</span></p>
+                <p>Anchors use the <span class="code">id</span> attribute on elements and work seamlessly with browser history.</p>
+            </div>
+
+            <p style="margin-top: 1.5rem;">Jump to sections:</p>
+            <div class="examples">
+                <a href="#query" class="example-link">
+                    <span>Query Parameters Section</span>
+                    <span class="arrow">↑</span>
+                </a>
+                <a href="#examples" class="example-link">
+                    <span>Complete Examples</span>
+                    <span class="arrow">↓</span>
+                </a>
+                <a href="?filter=active#anchors" class="example-link">
+                    <span>Filter + Jump to Anchors</span>
+                    <span class="arrow">→</span>
+                </a>
+            </div>
+        </section>
+
+        <section id="examples">
+            <h2>URL Structure Breakdown</h2>
+            <div class="card">
+                <p><span class="code">https://example.com/path/page.html?query=value#section</span></p>
+                <ul style="margin-top: 1rem;">
+                    <li><strong>protocol://</strong> — https or http (secure or standard)</li>
+                    <li><strong>example.com</strong> — Domain name</li>
+                    <li><strong>/path/page.html</strong> — File location (path)</li>
+                    <li><strong>?query=value</strong> — Query string (parameters)</li>
+                    <li><strong>#section</strong> — Anchor/Fragment identifier</li>
+                </ul>
+            </div>
+
+            <h2 style="margin-top: 3rem;">Best Practices</h2>
+            <div class="card">
+                <ul>
+                    <li><strong>Be descriptive:</strong> Use clear, meaningful parameter names</li>
+                    <li><strong>URL encode:</strong> Encode special characters (e.g., spaces as %20)</li>
+                    <li><strong>Avoid duplicates:</strong> Don't repeat information in path and query</li>
+                    <li><strong>Keep it short:</strong> Shorter URLs are easier to share and remember</li>
+                    <li><strong>Maintain consistency:</strong> Use lowercase, hyphens for readability</li>
+                    <li><strong>Document parameters:</strong> Make it clear what each parameter does</li>
+                </ul>
+            </div>
+        </section>
+
+        <footer>
+            <p>Built with semantic HTML, thoughtful design, and clean URL architecture • Light/Dark Mode Enabled</p>
+        </footer>
+    </main>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const toggle = document.querySelector('.theme-toggle');
+            
+            body.classList.toggle('dark-mode');
+            
+            // Save preference
+            const isDark = body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            
+            // Update icon
+            toggle.querySelector('.theme-icon').textContent = isDark ? '🌙' : '☀️';
+        }
+
+        // Load saved theme
+        function loadTheme() {
+            const saved = localStorage.getItem('theme');
+            const isDark = saved === 'dark' || 
+                          (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.theme-icon').textContent = '🌙';
+            }
+        }
+
+        // Initialize
+        loadTheme();
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Log URL parameters for demonstration
+        window.addEventListener('load', () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.size > 0) {
+                console.log('Current URL Parameters:');
+                params.forEach((value, key) => {
+                    console.log(`${key}: ${value}`);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
